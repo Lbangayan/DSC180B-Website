@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DSC180B - In-Context Learning Testing</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 80px 20px;
+            text-align: center;
+        }
+        
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        
+        .intro-section {
+            background: #f8f9fa;
+            padding: 40px;
+            border-radius: 10px;
+            margin-bottom: 40px;
+        }
+        
+        .intro-section h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+        }
+        
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        
+        .feature-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+        }
+        
+        .feature-card h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        
+        .cta-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 40px;
+            text-decoration: none;
+            border-radius: 50px;
+            font-size: 1.1em;
+            font-weight: bold;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            margin: 20px 10px 20px 0;
+            display: inline-block;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .cta-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .cta-button.secondary {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+        
+        footer {
+            background: #333;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: 60px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>🧠 In-Context Learning (ICL) Testing Platform</h1>
+        <p>Test and evaluate commercial LLMs with custom ICL parameters</p>
+    </header>
+    
+    <div class="container">
+        <section class="intro-section">
+            <h2>About This Project</h2>
+            <p>
+                This platform allows you to test In-Context Learning (ICL) with commercial Large Language Models 
+                (LLMs) like GPT-4, Claude, and Gemini. Configure parameters such as dataset size (d), number of examples (N), 
+                rank (R), and flip probability to understand how ICL performance varies across different conditions.
+            </p>
+            <p style="margin-top: 15px;">
+                <strong>Key Features:</strong>
+            </p>
+            <div class="features">
+                <div class="feature-card">
+                    <h3>📊 Single Test Mode</h3>
+                    <p>Test one configuration at a time and get detailed results</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🔄 Batch Testing</h3>
+                    <p>Run parameter sweeps in parallel for comprehensive analysis</p>
+                </div>
+                <div class="feature-card">
+                    <h3>📈 Results Dashboard</h3>
+                    <p>Visualize and track your testing results</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🤖 Multiple LLMs</h3>
+                    <p>Test with GPT-4, Claude 3, and Google Gemini</p>
+                </div>
+            </div>
+        </section>
+        
+        <section style="text-align: center;">
+            <h2 style="color: #667eea; margin-bottom: 30px;">Ready to Test?</h2>
+            <a href="https://dsc180b-website-nzrejyvalcjjoejdqmt5gy.streamlit.app/" class="cta-button" target="_blank">
+                Launch Interactive App →
+            </a>
+            <a href="https://github.com/Lbangayan/DSC180B-Website" class="cta-button secondary" target="_blank">
+                View on GitHub →
+            </a>
+        </section>
+        
+        <section class="intro-section" style="margin-top: 40px;">
+            <h2>How It Works</h2>
+            <h3 style="color: #764ba2; margin-top: 20px;">Parameters Explained:</h3>
+            <ul style="margin-left: 20px; margin-top: 10px;">
+                <li><strong>d (Dataset Size):</strong> Number of datapoints in your dataset</li>
+                <li><strong>N (Examples):</strong> Number of in-context examples to provide</li>
+                <li><strong>R (Rank):</strong> Rank parameter for the underlying model</li>
+                <li><strong>flip_prob (Noise):</strong> Probability of label flip (0-1)</li>
+            </ul>
+        </section>
+    </div>
+    
+    <footer>
+        <p>&copy; 2026 DSC180B Project | In-Context Learning Analysis</p>
+        <p>Built with Streamlit and Python</p>
+    </footer>
+</body>
+</html>
