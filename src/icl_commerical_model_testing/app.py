@@ -2,7 +2,7 @@ import streamlit as st
 import os
 import sys
 import torch
-import google.genai as genai
+import google.generativeai as genai
 from dotenv import load_dotenv
 import subprocess
 import json
