@@ -16,7 +16,11 @@ class GeminiProvider(LLMProvider):
     def predict(self, prompt: str) -> str:
         response = self.client.models.generate_content(
             model="gemini-2.5-flash",
-            contents=prompt
+            contents=prompt,
+            config={
+                "max_output_tokens": 10,
+                "temperature": 0
+            }
         )
         return response.text.strip()
 
