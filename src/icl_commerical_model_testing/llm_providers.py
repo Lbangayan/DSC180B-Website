@@ -10,19 +10,27 @@ class LLMProvider(ABC):
 
 class GeminiProvider(LLMProvider):
     def __init__(self, api_key: str):
-        self.client = genai.Client(api_key=api_key)
-        self.model = self.client.models.generate_content
+        self.client = genai.Client(
+            api_key=api_key,
+            http_options=genai.types.HttpOptions(api_version="v1")
+        )
     
     def predict(self, prompt: str) -> str:
         response = self.client.models.generate_content(
-            model="gemini-2.5-flash",
+            model="models/gemini-2.5-flash",
             contents=prompt,
-            config={
-                "max_output_tokens": 10,
-                "temperature": 0
-            }
+            config=genai.types.GenerateContentConfig(
+                max_output_tokens=10,
+                temperature=0
+            )
         )
-        return response.text.strip()
+        # Handle the response structure properly
+        if hasattr(response, 'text') and response.text:
+            return response.text.strip()
+        elif hasattr(response, 'candidates') and response.candidates:
+            return response.candidates[0].content.parts[0].text.strip()
+        else:
+            raise ValueError(f"Unexpected response structure: {response}")
 
 class ClaudeProvider(LLMProvider):
     def __init__(self, api_key: str):
