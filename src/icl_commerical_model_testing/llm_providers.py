@@ -1,6 +1,6 @@
 import anthropic
 import openai
-import google.generativeai as genai
+from google import genai
 from abc import ABC, abstractmethod
 
 class LLMProvider(ABC):
@@ -11,7 +11,7 @@ class LLMProvider(ABC):
 class GeminiProvider(LLMProvider):
     def __init__(self, api_key: str):
         genai.configure(api_key=api_key)
-        self.model = genai.GenerativeModel('gemini-2.0-flash')
+        self.model = genai.GenerativeModel('gemini-2.5-flash')
     
     def predict(self, prompt: str) -> str:
         response = self.model.generate_content(prompt)
@@ -23,7 +23,7 @@ class ClaudeProvider(LLMProvider):
     
     def predict(self, prompt: str) -> str:
         message = self.client.messages.create(
-            model="claude-3-haiku-20240307",
+            model="claude-opus-4-1-20250805",
             max_tokens=10,
             messages=[{"role": "user", "content": prompt}]
         )
