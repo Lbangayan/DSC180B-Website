@@ -3,179 +3,1167 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DSC180B - In-Context Learning Testing</title>
+    <title>Investigation into In-Context Learning Capabilities of Transformers</title>
     <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-dark: #3730a3;
+            --primary-light: #818cf8;
+            --accent: #7c3aed;
+            --bg: #ffffff;
+            --bg-alt: #f8fafc;
+            --bg-card: #ffffff;
+            --text: #1e293b;
+            --text-secondary: #475569;
+            --border: #e2e8f0;
+            --success: #059669;
+            --warning: #d97706;
+            --info: #0284c7;
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-        
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-            color: #333;
+
+        html {
+            scroll-behavior: smooth;
         }
-        
-        header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.7;
+            color: var(--text);
+            background: var(--bg);
+        }
+
+        /* ---- Navigation ---- */
+        nav {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            padding: 0 24px;
+        }
+
+        nav .nav-inner {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 56px;
+        }
+
+        nav .nav-brand {
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: var(--primary);
+            text-decoration: none;
+            white-space: nowrap;
+        }
+
+        nav .nav-links {
+            display: flex;
+            gap: 4px;
+            list-style: none;
+            flex-wrap: wrap;
+        }
+
+        nav .nav-links a {
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            font-weight: 500;
+            padding: 6px 12px;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+
+        nav .nav-links a:hover,
+        nav .nav-links a:focus {
+            color: var(--primary);
+            background: #eef2ff;
+        }
+
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 4px;
+            cursor: pointer;
+            padding: 8px;
+            border: none;
+            background: none;
+        }
+
+        .hamburger span {
+            display: block;
+            width: 22px;
+            height: 2px;
+            background: var(--text);
+            border-radius: 2px;
+            transition: 0.3s;
+        }
+
+        /* ---- Hero ---- */
+        .hero {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #a855f7 100%);
             color: white;
-            padding: 80px 20px;
+            padding: 80px 24px 64px;
             text-align: center;
         }
-        
-        header h1 {
-            font-size: 2.5em;
-            margin-bottom: 10px;
+
+        .hero h1 {
+            font-size: clamp(1.6rem, 4vw, 2.4rem);
+            font-weight: 800;
+            line-height: 1.25;
+            max-width: 800px;
+            margin: 0 auto 16px;
         }
-        
-        header p {
-            font-size: 1.2em;
-            opacity: 0.9;
+
+        .hero .subtitle {
+            font-size: clamp(0.95rem, 2vw, 1.15rem);
+            opacity: 0.92;
+            max-width: 640px;
+            margin: 0 auto 24px;
+            line-height: 1.6;
         }
-        
-        .container {
-            max-width: 1000px;
-            margin: 0 auto;
-            padding: 40px 20px;
+
+        .hero .team {
+            font-size: 0.9rem;
+            opacity: 0.85;
+            margin-bottom: 8px;
         }
-        
-        .intro-section {
-            background: #f8f9fa;
-            padding: 40px;
-            border-radius: 10px;
-            margin-bottom: 40px;
+
+        .hero .affiliation {
+            font-size: 0.82rem;
+            opacity: 0.7;
+            margin-bottom: 28px;
         }
-        
-        .intro-section h2 {
-            color: #667eea;
-            margin-bottom: 20px;
-            font-size: 1.8em;
+
+        .hero .cta-group {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
         }
-        
-        .features {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin: 30px 0;
-        }
-        
-        .feature-card {
-            background: white;
-            padding: 20px;
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 10px 22px;
             border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            transition: transform 0.3s ease;
-        }
-        
-        .feature-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
-        }
-        
-        .feature-card h3 {
-            color: #667eea;
-            margin-bottom: 10px;
-        }
-        
-        .cta-button {
-            display: inline-block;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 15px 40px;
+            font-size: 0.9rem;
+            font-weight: 600;
             text-decoration: none;
-            border-radius: 50px;
-            font-size: 1.1em;
-            font-weight: bold;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            margin: 20px 10px 20px 0;
-            display: inline-block;
+            transition: all 0.2s;
             border: none;
             cursor: pointer;
         }
-        
-        .cta-button:hover {
-            transform: scale(1.05);
-            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
-        }
-        
-        .cta-button.secondary {
+
+        .btn-white {
             background: white;
-            color: #667eea;
-            border: 2px solid #667eea;
+            color: var(--primary);
         }
-        
-        footer {
-            background: #333;
+
+        .btn-white:hover { background: #f0f0ff; transform: translateY(-1px); }
+
+        .btn-outline {
+            background: transparent;
             color: white;
+            border: 2px solid rgba(255,255,255,0.5);
+        }
+
+        .btn-outline:hover { border-color: white; background: rgba(255,255,255,0.1); }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover { background: var(--primary-dark); transform: translateY(-1px); }
+
+        /* ---- Sections ---- */
+        .section {
+            padding: 64px 24px;
+        }
+
+        .section-alt {
+            background: var(--bg-alt);
+        }
+
+        .container {
+            max-width: 960px;
+            margin: 0 auto;
+        }
+
+        .section-label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--primary);
+            margin-bottom: 6px;
+        }
+
+        .section h2 {
+            font-size: clamp(1.4rem, 3vw, 1.8rem);
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: var(--text);
+        }
+
+        .section p, .section li {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        .section p + p {
+            margin-top: 12px;
+        }
+
+        /* ---- Cards ---- */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 20px;
+            margin-top: 28px;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            transition: box-shadow 0.2s, transform 0.2s;
+        }
+
+        .card:hover {
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            transform: translateY(-2px);
+        }
+
+        .card h3 {
+            font-size: 1.05rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--text);
+        }
+
+        .card p {
+            font-size: 0.88rem;
+            color: var(--text-secondary);
+        }
+
+        .card .card-tag {
+            display: inline-block;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 3px 8px;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+
+        .tag-rq1 { background: #dbeafe; color: #1e40af; }
+        .tag-rq2 { background: #fef3c7; color: #92400e; }
+        .tag-rq3 { background: #d1fae5; color: #065f46; }
+
+        /* ---- Math block ---- */
+        .math-block {
+            background: #f1f5f9;
+            border-left: 4px solid var(--primary);
+            padding: 16px 20px;
+            border-radius: 0 8px 8px 0;
+            margin: 16px 0;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.9rem;
+            overflow-x: auto;
+        }
+
+        /* ---- Result blocks ---- */
+        .result-highlight {
+            background: linear-gradient(135deg, #eef2ff, #ede9fe);
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+        }
+
+        .result-highlight h4 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--primary-dark);
+        }
+
+        .finding-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .finding-list li {
+            position: relative;
+            padding-left: 24px;
+            margin-bottom: 10px;
+            font-size: 0.92rem;
+        }
+
+        .finding-list li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 8px;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--primary-light);
+        }
+
+        /* ---- Table ---- */
+        .table-wrap {
+            overflow-x: auto;
+            margin: 20px 0;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.88rem;
+        }
+
+        th {
+            background: #f1f5f9;
+            font-weight: 700;
+            text-align: left;
+            padding: 12px 16px;
+            color: var(--text);
+            white-space: nowrap;
+        }
+
+        td {
+            padding: 10px 16px;
+            border-top: 1px solid var(--border);
+            color: var(--text-secondary);
+        }
+
+        tr:hover td { background: #fafbfd; }
+
+        /* ---- Callout ---- */
+        .callout {
+            border-radius: 10px;
+            padding: 20px 24px;
+            margin: 20px 0;
+            font-size: 0.9rem;
+        }
+
+        .callout-info {
+            background: #eff6ff;
+            border-left: 4px solid var(--info);
+        }
+
+        .callout-warning {
+            background: #fffbeb;
+            border-left: 4px solid var(--warning);
+        }
+
+        .callout-success {
+            background: #ecfdf5;
+            border-left: 4px solid var(--success);
+        }
+
+        .callout strong {
+            display: block;
+            margin-bottom: 4px;
+            color: var(--text);
+        }
+
+        /* ---- Regime diagram (CSS-only visual) ---- */
+        .regime-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin: 20px 0;
+        }
+
+        .regime-box {
             text-align: center;
+            padding: 20px 16px;
+            border-radius: 10px;
+            font-size: 0.85rem;
+        }
+
+        .regime-box h4 {
+            font-size: 0.95rem;
+            margin-bottom: 6px;
+        }
+
+        .regime-under { background: #fef2f2; border: 1px solid #fecaca; }
+        .regime-under h4 { color: #991b1b; }
+        .regime-classical { background: #fffbeb; border: 1px solid #fde68a; }
+        .regime-classical h4 { color: #92400e; }
+        .regime-benign { background: #ecfdf5; border: 1px solid #a7f3d0; }
+        .regime-benign h4 { color: #065f46; }
+
+        /* ---- Assets section ---- */
+        .asset-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-top: 24px;
+        }
+
+        .asset-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
             padding: 20px;
-            margin-top: 60px;
+            text-align: center;
+            text-decoration: none;
+            color: var(--text);
+            transition: all 0.2s;
+        }
+
+        .asset-card:hover {
+            border-color: var(--primary-light);
+            box-shadow: 0 4px 16px rgba(79, 70, 229, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .asset-icon {
+            font-size: 2rem;
+            margin-bottom: 8px;
+        }
+
+        .asset-card h4 {
+            font-size: 0.95rem;
+            margin-bottom: 4px;
+        }
+
+        .asset-card p {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        /* ---- Team ---- */
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-top: 24px;
+        }
+
+        .team-member {
+            text-align: center;
+            padding: 24px 16px;
+            border-radius: 10px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+        }
+
+        .team-member .avatar {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin: 0 auto 12px;
+        }
+
+        .team-member h4 { font-size: 0.95rem; }
+        .team-member .role { font-size: 0.8rem; color: var(--text-secondary); margin-top: 4px; }
+
+        /* ---- Footer ---- */
+        footer {
+            background: var(--text);
+            color: #94a3b8;
+            padding: 32px 24px;
+            text-align: center;
+            font-size: 0.82rem;
+        }
+
+        footer a { color: var(--primary-light); text-decoration: none; }
+        footer a:hover { text-decoration: underline; }
+
+        /* ---- Responsive ---- */
+        @media (max-width: 768px) {
+            nav .nav-links {
+                display: none;
+                flex-direction: column;
+                position: absolute;
+                top: 56px;
+                left: 0;
+                right: 0;
+                background: white;
+                border-bottom: 1px solid var(--border);
+                padding: 8px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            }
+
+            nav .nav-links.open { display: flex; }
+
+            .hamburger { display: flex; }
+
+            .hero { padding: 56px 20px 48px; }
+
+            .regime-grid { grid-template-columns: 1fr; }
+
+            .section { padding: 48px 20px; }
+        }
+
+        /* ---- Accordion (for methods detail) ---- */
+        details {
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            margin: 10px 0;
+            background: white;
+        }
+
+        details + details { margin-top: 8px; }
+
+        summary {
+            cursor: pointer;
+            padding: 14px 18px;
+            font-weight: 600;
+            font-size: 0.92rem;
+            color: var(--text);
+            list-style: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        summary::-webkit-details-marker { display: none; }
+
+        summary::before {
+            content: '+';
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--primary);
+            width: 20px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        details[open] summary::before { content: '\2212'; }
+
+        details .detail-body {
+            padding: 0 18px 16px;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        /* ---- Figures ---- */
+        .figure {
+            margin: 24px 0;
+            text-align: center;
+        }
+
+        .figure img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        }
+
+        .figure figcaption {
+            font-size: 0.84rem;
+            color: var(--text-secondary);
+            margin-top: 10px;
+            line-height: 1.5;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .figure figcaption strong {
+            color: var(--text);
+        }
+
+        .fig-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            margin: 24px 0;
+        }
+
+        .fig-grid .figure {
+            margin: 0;
+        }
+
+        /* ---- Divider ---- */
+        .divider {
+            border: none;
+            height: 1px;
+            background: var(--border);
+            margin: 32px 0;
+        }
+
+        /* ---- Inline list ---- */
+        .inline-params {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 12px 0;
+        }
+
+        .param-chip {
+            background: #f1f5f9;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 0.82rem;
+            font-family: 'Courier New', Courier, monospace;
+            color: var(--text);
         }
     </style>
 </head>
 <body>
-    <header>
-        <h1>🧠 In-Context Learning (ICL) Testing Platform</h1>
-        <p>Test and evaluate commercial LLMs with custom ICL parameters</p>
-    </header>
-    
-    <div class="container">
-        <section class="intro-section">
-            <h2>About This Project</h2>
-            <p>
-                This platform allows you to test In-Context Learning (ICL) with commercial Large Language Models 
-                (LLMs) like GPT-4, Claude, and Gemini. Configure parameters such as dataset size (d), number of examples (N), 
-                rank (R), and flip probability to understand how ICL performance varies across different conditions.
-            </p>
-            <p style="margin-top: 15px;">
-                <strong>Key Features:</strong>
-            </p>
-            <div class="features">
-                <div class="feature-card">
-                    <h3>📊 Single Test Mode</h3>
-                    <p>Test one configuration at a time and get detailed results</p>
-                </div>
-                <div class="feature-card">
-                    <h3>🔄 Batch Testing</h3>
-                    <p>Run parameter sweeps in parallel for comprehensive analysis</p>
-                </div>
-                <div class="feature-card">
-                    <h3>📈 Results Dashboard</h3>
-                    <p>Visualize and track your testing results</p>
-                </div>
-                <div class="feature-card">
-                    <h3>🤖 Multiple LLMs</h3>
-                    <p>Test with GPT-4, Claude 3, and Google Gemini</p>
-                </div>
-            </div>
-        </section>
-        
-        <section style="text-align: center;">
-            <h2 style="color: #667eea; margin-bottom: 30px;">Ready to Test?</h2>
-            <a href="https://dsc180b-website-nzrejyvalcjjoejdqmt5gy.streamlit.app/" class="cta-button" target="_blank">
-                Launch Interactive App →
-            </a>
-            <a href="https://github.com/Lbangayan/DSC180B-Website" class="cta-button secondary" target="_blank">
-                View on GitHub →
-            </a>
-        </section>
-        
-        <section class="intro-section" style="margin-top: 40px;">
-            <h2>How It Works</h2>
-            <h3 style="color: #764ba2; margin-top: 20px;">Parameters Explained:</h3>
-            <ul style="margin-left: 20px; margin-top: 10px;">
-                <li><strong>d (Dataset Size):</strong> Number of datapoints in your dataset</li>
-                <li><strong>N (Examples):</strong> Number of in-context examples to provide</li>
-                <li><strong>R (Rank):</strong> Rank parameter for the underlying model</li>
-                <li><strong>flip_prob (Noise):</strong> Probability of label flip (0-1)</li>
-            </ul>
-        </section>
+
+<!-- Navigation -->
+<nav>
+    <div class="nav-inner">
+        <a href="#top" class="nav-brand">ICL Transformers</a>
+        <button class="hamburger" aria-label="Toggle navigation" onclick="document.querySelector('.nav-links').classList.toggle('open')">
+            <span></span><span></span><span></span>
+        </button>
+        <ul class="nav-links">
+            <li><a href="#motivation">Motivation</a></li>
+            <li><a href="#problem">Problem</a></li>
+            <li><a href="#methods">Methods</a></li>
+            <li><a href="#results">Results</a></li>
+            <li><a href="#limitations">Limitations</a></li>
+            <li><a href="#assets">Report &amp; Poster</a></li>
+            <li><a href="#team">Team</a></li>
+        </ul>
     </div>
-    
-    <footer>
-        <p>&copy; 2026 DSC180B Project | In-Context Learning Analysis</p>
-        <p>Built with Streamlit and Python</p>
-    </footer>
+</nav>
+
+<!-- Hero -->
+<section class="hero" id="top">
+    <h1>Investigation into In-Context Learning Capabilities of Transformers</h1>
+    <p class="subtitle">
+        A systematic empirical study of when and why transformers can learn new tasks
+        from examples alone&mdash;without any parameter updates&mdash;and the surprising
+        conditions under which they generalize even from noisy data.
+    </p>
+    <p class="team">Rushil Chandrupatla &middot; Leo Bangayan &middot; Sebastian Leng</p>
+    <p class="affiliation">Mentor: Arya Mazumdar &middot; DSC 180B Capstone, UC San Diego &middot; 2026</p>
+    <div class="cta-group">
+        <a href="poster_dsc180.pdf" class="btn btn-white" target="_blank">View Poster (PDF)</a>
+        <a href="DSC_Capstone_Q2_Project_Report.pdf" class="btn btn-outline" target="_blank">Full Report (PDF)</a>
+        <a href="https://github.com/Lbangayan/DSC180B-Website" class="btn btn-outline" target="_blank">GitHub Repo</a>
+    </div>
+</section>
+
+<!-- Motivation -->
+<section class="section" id="motivation">
+    <div class="container">
+        <p class="section-label">Motivation</p>
+        <h2>Why Study In-Context Learning?</h2>
+        <p>
+            <strong>In-context learning (ICL)</strong> is the ability of transformer models to solve new tasks
+            using only a handful of example input&ndash;output pairs provided in the prompt, with
+            <em>no parameter updates</em>. This is how modern LLMs like GPT-4 and Claude can answer
+            novel questions after seeing just a few demonstrations.
+        </p>
+        <p>
+            Understanding ICL matters because training large models is extremely expensive&mdash;GPT-3
+            training took roughly 3&ndash;4 continuous months. If models can adapt to new tasks purely
+            through context, we can bypass costly retraining cycles. Yet the mechanisms driving
+            ICL remain poorly understood: when does it work, when does it fail, and what makes
+            the difference?
+        </p>
+        <p>
+            We conducted a comprehensive empirical investigation to answer these questions across
+            three research axes: <strong>scaling laws</strong>, <strong>benign overfitting</strong>,
+            and <strong>behavior of full transformer architectures</strong>.
+        </p>
+    </div>
+</section>
+
+<!-- Problem Setup -->
+<section class="section section-alt" id="problem">
+    <div class="container">
+        <p class="section-label">Problem Setup</p>
+        <h2>Task Definition &amp; Scope</h2>
+        <p>
+            We study <strong>binary classification</strong> tasks generated from a Gaussian mixture model.
+            Each task is an independent classification problem with its own direction vector, so the
+            model must <em>infer the task from context</em> rather than memorize a fixed rule.
+        </p>
+
+        <div class="math-block">
+            &mu;<sub>&tau;</sub> ~ Uniform(R &middot; S<sup>d&minus;1</sup>),&emsp;
+            x<sub>i</sub> = y<sub>i</sub>&mu; + z<sub>i</sub>,&emsp;
+            z<sub>i</sub> ~ N(0, I<sub>d</sub>),&emsp;
+            y<sub>i</sub> &isin; {&minus;1, +1}
+        </div>
+
+        <p>
+            <strong>R</strong> controls the separation between classes (signal strength). Each task
+            consists of N labeled context examples plus one query point whose label must be predicted.
+        </p>
+
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Parameter</th>
+                        <th>Symbol</th>
+                        <th>Description</th>
+                        <th>Range Tested</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>Feature dimension</td><td>d</td><td>Number of features per data point</td><td>50 &ndash; 1000</td></tr>
+                    <tr><td>Context examples</td><td>N</td><td>Labeled examples shown in-context</td><td>5 &ndash; 80</td></tr>
+                    <tr><td>Training tasks</td><td>B</td><td>Number of tasks per training batch</td><td>50 &ndash; 2000</td></tr>
+                    <tr><td>Signal strength</td><td>R</td><td>Class separation (signal-to-noise)</td><td>1.35 &ndash; 9.5</td></tr>
+                    <tr><td>Label noise</td><td>&epsilon;</td><td>Probability of flipped context labels</td><td>0 &ndash; 0.4</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <h3 style="margin-top: 28px; font-size: 1.05rem;">Scope Boundaries</h3>
+        <p>
+            <strong>What we did:</strong> Systematic empirical sweeps over (d, N, B, R, &epsilon;) on synthetic
+            Gaussian mixture tasks using a linear in-context classifier, plus evaluation of commercial
+            LLMs (GPT-4o-mini, Claude, Gemini) on the same task format.
+        </p>
+        <p>
+            <strong>What we did not do:</strong> We did not derive new theoretical bounds or train full-scale
+            transformer architectures from scratch. Our linear classifier isolates the geometric
+            mechanism of ICL; full transformers were evaluated as pre-trained black boxes.
+        </p>
+    </div>
+</section>
+
+<!-- Research Questions -->
+<section class="section" id="methods">
+    <div class="container">
+        <p class="section-label">Approach</p>
+        <h2>Three Research Questions</h2>
+        <p>
+            We organized our investigation around three complementary questions, each probing a different aspect of in-context learning.
+            Expand each section below for methodological details.
+        </p>
+
+        <div class="card-grid" style="margin-bottom: 28px;">
+            <div class="card">
+                <span class="card-tag tag-rq1">RQ 1</span>
+                <h3>Scaling Laws</h3>
+                <p>How does in-context test accuracy scale with feature dimension (d), context size (N), and number of training tasks (B)?</p>
+            </div>
+            <div class="card">
+                <span class="card-tag tag-rq2">RQ 2</span>
+                <h3>Benign Overfitting</h3>
+                <p>Under what conditions does the model memorize noisy context labels yet still generalize correctly on clean test data?</p>
+            </div>
+            <div class="card">
+                <span class="card-tag tag-rq3">RQ 3</span>
+                <h3>Full Transformers</h3>
+                <p>Do commercial LLMs (GPT, Claude, Gemini) exhibit the same ICL behaviors predicted by linear attention theory?</p>
+            </div>
+        </div>
+
+        <details>
+            <summary>RQ 1 &mdash; Model &amp; Training Details</summary>
+            <div class="detail-body">
+                <p>
+                    We use a <strong>linear in-context classifier</strong> with a single learnable matrix
+                    W &isin; R<sup>d&times;d</sup>. The model computes the label-weighted empirical mean of context
+                    examples, then predicts via the inner product &mu;&#770;<sup>T</sup>W x<sub>query</sub>.
+                    This formulation mirrors the theoretical parameterization studied by Frei &amp; Vardi (2024)
+                    while remaining tractable for large-scale sweeps.
+                </p>
+                <p>
+                    <strong>Training:</strong> SGD with learning rate &eta; = 0.01, zero initialization,
+                    up to 1000 steps, evaluated every 10 steps across 3 independent seeds.
+                    Loss is logistic and computed <em>only on the query</em>&mdash;context predictions
+                    are used exclusively for evaluation.
+                </p>
+                <p>
+                    <strong>Experiments:</strong> We swept d &isin; {50, 100, 200, 500, 1000},
+                    N &isin; {5, 10, 20, 40, 80}, B &isin; {50, 100, 250, 500, 1000, 2000},
+                    under both constant R = 6.45 and SNR-scaled R = 0.3&radic;d.
+                    Interaction grids over (d, N) and (B, N) captured cross-variable effects.
+                </p>
+            </div>
+        </details>
+
+        <details>
+            <summary>RQ 2 &mdash; Noise Injection &amp; Regime Classification</summary>
+            <div class="detail-body">
+                <p>
+                    We inject label noise by independently flipping each context label with probability
+                    &epsilon; &isin; {0, 0.05, 0.1, 0.2, 0.3, 0.4}. In one set of experiments, noise is applied
+                    only to context labels (query labels remain clean); in another, noise is applied uniformly
+                    to both context and query labels.
+                </p>
+                <p><strong>Regime classification:</strong></p>
+                <div class="regime-grid">
+                    <div class="regime-box regime-under">
+                        <h4>Underfitting</h4>
+                        <p>Low in-context accuracy,<br>low test accuracy</p>
+                    </div>
+                    <div class="regime-box regime-classical">
+                        <h4>Classical Overfitting</h4>
+                        <p>High in-context accuracy,<br>low test accuracy</p>
+                    </div>
+                    <div class="regime-box regime-benign">
+                        <h4>Benign Overfitting</h4>
+                        <p>High noisy in-context accuracy,<br>high test accuracy</p>
+                    </div>
+                </div>
+                <p>
+                    We visualized regimes using phase diagrams over (d, &epsilon;), (R, &epsilon;), and (N, &epsilon;),
+                    sweeping across dimensionality, signal strength, and context size interactions.
+                </p>
+            </div>
+        </details>
+
+        <details>
+            <summary>RQ 3 &mdash; Commercial LLM Evaluation</summary>
+            <div class="detail-body">
+                <p>
+                    We evaluated <strong>Google Gemini 2.0 Flash</strong>, <strong>Anthropic Claude</strong>,
+                    and <strong>OpenAI GPT-4o-mini</strong> on the same Gaussian mixture classification tasks.
+                    Since these models expect text, we serialized each feature vector as comma-separated
+                    floating-point numbers (4 decimal places) and constructed few-shot prompts with
+                    N labeled examples followed by an unlabeled query.
+                </p>
+                <p>
+                    We also probed the open-weights <strong>TinyLlama-1.1B</strong> model on synthetic
+                    linear regression tasks, comparing its MSE against one-step gradient descent
+                    and preconditioned GD++ baselines.
+                </p>
+            </div>
+        </details>
+    </div>
+</section>
+
+<!-- Results -->
+<section class="section section-alt" id="results">
+    <div class="container">
+        <p class="section-label">Key Results</p>
+        <h2>What We Found</h2>
+        <p style="margin-bottom: 8px;">
+            Below are the headline findings from each research question.
+            Full training curves, phase diagrams, and additional figures are available in the
+            <a href="DSC_Capstone_Q2_Project_Report.pdf" target="_blank">full report</a> and
+            <a href="poster_dsc180.pdf" target="_blank">poster</a>.
+        </p>
+
+        <!-- RQ1 Results -->
+        <hr class="divider">
+        <span class="card-tag tag-rq1" style="margin-top: 8px;">RQ 1</span>
+        <h3 style="margin-top: 8px;">Scaling Laws</h3>
+
+        <div class="result-highlight">
+            <h4>Dimension (d)</h4>
+            <ul class="finding-list">
+                <li>Under <strong>constant R</strong>, both validation and in-context accuracy reach 1.0 regardless of dimension, but <strong>higher d slows convergence</strong> because a fixed signal becomes weaker in higher-dimensional noise.</li>
+                <li>Under <strong>SNR-scaled R</strong> (R = 0.3&radic;d), performance reliably reaches 1.0 regardless of d, since signal strength grows with dimension.</li>
+            </ul>
+        </div>
+
+        <div class="fig-grid">
+            <figure class="figure">
+                <img src="plots/rq1_d50_snr.png" alt="Learning curves for d=50 with SNR-scaled R showing train, validation, and in-context accuracy over training steps">
+                <figcaption><strong>Figure 1.</strong> d=50, SNR-scaled R. In-context accuracy reaches 1.0 quickly, but validation accuracy plateaus at ~0.95&mdash;the model classifies its own context well but struggles to generalize to unseen query points in low dimensions.</figcaption>
+            </figure>
+            <figure class="figure">
+                <img src="plots/rq1_d1000_const.png" alt="Learning curves for d=1000 with constant R showing gradual convergence to 1.0">
+                <figcaption><strong>Figure 2.</strong> d=1000, constant R=6.45. Despite 1000 dimensions, all three accuracy metrics converge to 1.0, though convergence is more gradual. Higher dimensions slow learning but do not prevent it when signal is sufficient.</figcaption>
+            </figure>
+        </div>
+
+        <div class="result-highlight">
+            <h4>Context Size (N)</h4>
+            <ul class="finding-list">
+                <li>More context examples raise the <strong>starting accuracy</strong> of the model (N=80 starts at ~0.98 vs N=5 at ~0.75 for validation), representing better initial task inference.</li>
+                <li>However, all configurations converge to comparable final accuracy. <strong>N primarily affects convergence speed, not ceiling performance.</strong></li>
+            </ul>
+        </div>
+
+        <div class="fig-grid">
+            <figure class="figure">
+                <img src="plots/rq1_n5.png" alt="Learning curves with only 5 context examples showing validation starting at 0.75">
+                <figcaption><strong>Figure 3.</strong> N=5 context examples. Validation accuracy starts at ~0.75 and takes ~30 steps to reach 1.0. With few examples, the model needs more training to compensate for limited per-task information.</figcaption>
+            </figure>
+            <figure class="figure">
+                <img src="plots/rq1_n80.png" alt="Learning curves with 80 context examples showing near-instant convergence">
+                <figcaption><strong>Figure 4.</strong> N=80 context examples. Validation starts at ~0.98 and reaches 1.0 almost immediately. More context examples give the model a much better initial estimate of the task, dramatically accelerating convergence.</figcaption>
+            </figure>
+        </div>
+
+        <div class="callout callout-info">
+            <strong>Interpretation</strong>
+            The scaling variables d, N, and B primarily control <em>convergence speed</em>.
+            The theoretical ceiling is determined by signal strength R relative to dimension d.
+            When R is scaled appropriately, the model reaches near-perfect accuracy across all tested configurations.
+        </div>
+
+        <!-- RQ2 Results -->
+        <hr class="divider">
+        <span class="card-tag tag-rq2" style="margin-top: 8px;">RQ 2</span>
+        <h3 style="margin-top: 8px;">Benign Overfitting</h3>
+
+        <div class="result-highlight">
+            <h4>Context-Only Noise</h4>
+            <ul class="finding-list">
+                <li>When noise is applied <strong>only to context labels</strong> (query labels remain clean), <strong>benign overfitting occurs across nearly all configurations</strong>&mdash;even at 40% label flipping.</li>
+                <li>The model memorizes noisy context labels (high in-context accuracy) while maintaining near-perfect validation accuracy on clean queries.</li>
+                <li>Higher dimensions slow convergence but do not prevent benign overfitting, as long as signal strength is sufficient.</li>
+            </ul>
+        </div>
+
+        <div class="fig-grid">
+            <figure class="figure">
+                <img src="plots/rq2_eps020.png" alt="Benign overfitting at 20% noise: in-context accuracy reaches 1.0 while validation also reaches 1.0">
+                <figcaption><strong>Figure 5.</strong> &epsilon;=0.2 (20% label noise), context-only. Despite 20% of context labels being flipped, the model memorizes even the noisy labels (in-context acc &rarr; 1.0) while still achieving perfect validation accuracy. This is classic benign overfitting.</figcaption>
+            </figure>
+            <figure class="figure">
+                <img src="plots/rq2_eps040.png" alt="Strong benign overfitting at 40% noise: in-context accuracy reaches 1.0, train accuracy caps around 0.8">
+                <figcaption><strong>Figure 6.</strong> &epsilon;=0.4 (40% label noise), context-only. Even with nearly half the labels flipped, in-context accuracy reaches 1.0 and validation converges to ~0.8. Train accuracy (blue) is most affected&mdash;it never reaches 1.0 because the noisy training signal caps it, yet generalization is preserved.</figcaption>
+            </figure>
+        </div>
+
+        <div class="result-highlight">
+            <h4>Uniform Noise (Context + Query)</h4>
+            <ul class="finding-list">
+                <li>When noise is applied to <strong>both context and query labels</strong>, signal strength R becomes critical. Low R (e.g., 1.35) causes collapse to near-random accuracy (underfitting).</li>
+                <li>Sufficient R (e.g., 8.97) restores benign overfitting, with validation accuracy reaching its theoretical maximum (1 &minus; &epsilon;).</li>
+                <li>Higher dimensionality can <strong>cause collapse</strong> rather than facilitate overfitting when signal is not scaled accordingly&mdash;opposite to the context-only noise case.</li>
+            </ul>
+        </div>
+
+        <div class="fig-grid">
+            <figure class="figure">
+                <img src="plots/rq2_lowR.png" alt="Underfitting with low signal strength R=1.35: validation accuracy stuck near 0.5 (random chance)">
+                <figcaption><strong>Figure 7.</strong> d=1500, R=1.35, &epsilon;=0.2, noise on both context and query. With weak signal, the model collapses: validation and train accuracy hover near 0.5 (random chance), while in-context accuracy slowly climbs to ~0.75. This is <strong>underfitting</strong>&mdash;the signal is too weak for the model to learn the task.</figcaption>
+            </figure>
+            <figure class="figure">
+                <img src="plots/rq2_highR.png" alt="Benign overfitting restored with high signal strength R=8.97: in-context accuracy near 1.0, validation near 0.8">
+                <figcaption><strong>Figure 8.</strong> Same setup but R=8.97. Stronger signal restores <strong>benign overfitting</strong>: in-context accuracy reaches ~0.99, while validation accuracy stabilizes at ~0.8 (its theoretical maximum of 1&minus;&epsilon;). Signal strength is the decisive factor.</figcaption>
+            </figure>
+        </div>
+
+        <div class="callout callout-warning">
+            <strong>Key Insight</strong>
+            Benign overfitting is <em>not</em> an exotic edge case. Under context-only noise, it is the
+            default behavior. The critical variable is the relationship between signal strength (R)
+            and dimensionality (d)&mdash;not noise level alone. Compare Figures 7 and 8: the
+            only difference is R, yet the outcome flips from underfitting to benign overfitting.
+        </div>
+
+        <!-- RQ3 Results -->
+        <hr class="divider">
+        <span class="card-tag tag-rq3" style="margin-top: 8px;">RQ 3</span>
+        <h3 style="margin-top: 8px;">Full Transformer Architectures</h3>
+
+        <div class="result-highlight">
+            <h4>Commercial LLMs (GPT-4o-mini, Claude, Gemini)</h4>
+            <ul class="finding-list">
+                <li>Performance <strong>improves with stronger signal</strong> (higher R) and <strong>degrades in high dimensions</strong>, partially aligning with linear ICL theory.</li>
+                <li>Results show that full transformers do implement some form of in-context classification on serialized numerical data, though performance is noisier than the trained linear model.</li>
+            </ul>
+        </div>
+
+        <figure class="figure">
+            <img src="plots/rq3_accuracy_vs_r.png" alt="Commercial LLM accuracy vs signal strength R for Gemini, Claude, and GPT" style="max-width: 640px;">
+            <figcaption><strong>Figure 9.</strong> Accuracy vs. signal strength (R) for three commercial LLMs (d=50, N=5). All providers show an upward trend as signal increases, consistent with linear ICL theory. Gemini performs best overall; Claude shows the steepest improvement. Shaded regions represent variance across seeds&mdash;note the high uncertainty, reflecting prompt sensitivity.</figcaption>
+        </figure>
+
+        <figure class="figure">
+            <img src="plots/rq3_heatmap.png" alt="Heatmap comparing accuracy of Gemini, Claude, and GPT across dimension and context length">
+            <figcaption><strong>Figure 10.</strong> Accuracy heatmaps across dimension (d) and context length (N) for each provider. <strong>Low-dimensional tasks (d=50&ndash;100) yield the best results</strong>, consistent with theoretical predictions. Performance drops sharply in higher dimensions (d&ge;500), especially for Claude and GPT. Gemini maintains moderate accuracy across more configurations. Red cells (0.00) indicate the model failed to produce valid predictions.</figcaption>
+        </figure>
+
+        <div class="result-highlight">
+            <h4>Open-Weights Probing (TinyLlama)</h4>
+            <ul class="finding-list">
+                <li>TinyLlama's MSE was compared against one-step gradient descent (GD-1) and preconditioned GD++ baselines on linear regression tasks.</li>
+                <li>Results provide evidence that full transformers naturally implement gradient-descent-like algorithms, as suggested by linear attention theory.</li>
+            </ul>
+        </div>
+
+        <div class="callout callout-success">
+            <strong>Interpretation</strong>
+            The ICL behaviors predicted by simplified linear theory are <em>partially preserved</em>
+            in full transformer architectures. Commercial LLMs show the same directional
+            trends (signal helps, high dimension hurts) but with greater variance, suggesting
+            additional mechanisms beyond pure geometric inference.
+        </div>
+
+        <p style="margin-top: 24px; text-align: center;">
+            <a href="DSC_Capstone_Q2_Project_Report.pdf" class="btn btn-primary" target="_blank">
+                See all figures &amp; training curves in the full report
+            </a>
+        </p>
+    </div>
+</section>
+
+<!-- Limitations -->
+<section class="section" id="limitations">
+    <div class="container">
+        <p class="section-label">Honest Assessment</p>
+        <h2>Limitations &amp; Failure Modes</h2>
+
+        <div class="card-grid">
+            <div class="card">
+                <h3>Synthetic Data Only</h3>
+                <p>All experiments use Gaussian mixture tasks. While this gives precise control, real-world ICL operates on natural language and heterogeneous data distributions. Our findings characterize the geometric mechanism but may not transfer directly to production settings.</p>
+            </div>
+            <div class="card">
+                <h3>Linear Classifier</h3>
+                <p>Our primary model is a linear in-context classifier (single W matrix). This deliberately isolates the geometric mechanism but cannot capture nonlinear attention effects present in full transformers.</p>
+            </div>
+            <div class="card">
+                <h3>Commercial LLM Noise</h3>
+                <p>RQ3 results are noisier due to uncontrollable factors: API-level randomness, prompt sensitivity, and the models' training on vastly different data. We cannot rule out that performance on serialized numerical data reflects prompt engineering rather than true ICL.</p>
+            </div>
+            <div class="card">
+                <h3>Computational Limits</h3>
+                <p>We trained for at most 1000 steps per configuration. Longer training could alter conclusions about convergence behavior, particularly in high-dimensional, low-signal regimes where accuracy was still improving at termination.</p>
+            </div>
+        </div>
+
+        <h3 style="margin-top: 32px; font-size: 1.05rem;">How to Interpret Our Results</h3>
+        <p>
+            Our accuracy metrics are averaged over 3 independent seeds, so differences under &plusmn;2%
+            should be considered noise. When we report that a configuration "reaches 1.0," this means
+            the mean across seeds is &ge;0.99. For benign overfitting results, the meaningful signal is
+            the <em>gap</em> between in-context accuracy (on noisy labels) and validation accuracy
+            (on clean data)&mdash;a large gap with both values high confirms benign overfitting.
+        </p>
+
+        <h3 style="margin-top: 24px; font-size: 1.05rem;">Next Steps</h3>
+        <p>
+            Future work could extend this analysis to multi-class settings, non-Gaussian distributions,
+            and mid-scale transformer architectures (e.g., fine-tuned GPT-2) where training dynamics
+            can be observed directly. Investigating the transition between benign and classical
+            overfitting with finer &epsilon; resolution would also help map the phase boundary more precisely.
+        </p>
+    </div>
+</section>
+
+<!-- Assets -->
+<section class="section section-alt" id="assets">
+    <div class="container">
+        <p class="section-label">Project Artifacts</p>
+        <h2>Report, Poster &amp; Code</h2>
+        <p>All project materials are publicly available.</p>
+
+        <div class="asset-grid">
+            <a href="DSC_Capstone_Q2_Project_Report.pdf" class="asset-card" target="_blank">
+                <div class="asset-icon" aria-hidden="true">&#128196;</div>
+                <h4>Full Report</h4>
+                <p>34-page PDF with all methods, figures, and discussion</p>
+            </a>
+            <a href="poster_dsc180.pdf" class="asset-card" target="_blank">
+                <div class="asset-icon" aria-hidden="true">&#128202;</div>
+                <h4>Conference Poster</h4>
+                <p>Visual summary of all three research questions</p>
+            </a>
+            <a href="https://github.com/Lbangayan/DSC180B-Website" class="asset-card" target="_blank">
+                <div class="asset-icon" aria-hidden="true">&#128187;</div>
+                <h4>GitHub Repository</h4>
+                <p>Source code, training scripts, and reproducibility artifacts</p>
+            </a>
+            <a href="https://dsc180b-website.streamlit.app" class="asset-card" target="_blank">
+                <div class="asset-icon" aria-hidden="true">&#127919;</div>
+                <h4>Interactive Demo</h4>
+                <p>Test ICL with GPT, Claude, and Gemini in your browser</p>
+            </a>
+        </div>
+
+        <div class="callout callout-info" style="margin-top: 24px;">
+            <strong>Reproducing Our Results</strong>
+            Clone the repository, install dependencies with <code>pip install -r requirements.txt</code>,
+            then run scripts in <code>src/icl_reproduction/</code> (e.g.,
+            <code>python example_comprehensive_pipeline.py</code>).
+            The commercial LLM tests require API keys set in a
+            <code>.env</code> file&mdash;see the repository README for details.
+        </div>
+    </div>
+</section>
+
+<!-- References -->
+<section class="section">
+    <div class="container">
+        <p class="section-label">References</p>
+        <h2>Citations</h2>
+        <ol style="padding-left: 20px; color: var(--text-secondary); font-size: 0.9rem;">
+            <li style="margin-bottom: 10px;">
+                Frei, S. &amp; Vardi, G. (2024).
+                <em>Trained Transformer Classifiers Generalize and Exhibit Benign Overfitting In-Context.</em>
+            </li>
+            <li style="margin-bottom: 10px;">
+                Garg, S., Tsipras, D., Liang, P., &amp; Valiant, G. (2023).
+                <em>What Can Transformers Learn In-Context? A Case Study of Simple Function Classes.</em>
+            </li>
+        </ol>
+        <p style="font-size: 0.85rem; margin-top: 12px;">
+            Our linear in-context classifier formulation follows the theoretical framework of [1].
+            The function-class perspective on ICL capabilities draws from [2].
+            Commercial LLM APIs (OpenAI, Anthropic, Google) were accessed via their respective Python SDKs.
+        </p>
+    </div>
+</section>
+
+<!-- Team -->
+<section class="section section-alt" id="team">
+    <div class="container">
+        <p class="section-label">Team</p>
+        <h2>Contributors</h2>
+
+        <div class="team-grid">
+            <div class="team-member">
+                <div class="avatar">RC</div>
+                <h4>Rushil Chandrupatla</h4>
+                <p class="role">RQ1 &amp; RQ2: model design, training pipeline, results analysis, report writing</p>
+            </div>
+            <div class="team-member">
+                <div class="avatar">SL</div>
+                <h4>Sebastian Leng</h4>
+                <p class="role">RQ2: benign overfitting experiments, noise injection methods, code</p>
+            </div>
+            <div class="team-member">
+                <div class="avatar">LB</div>
+                <h4>Leo Bangayan</h4>
+                <p class="role">RQ3: commercial LLM evaluation framework, interactive demo, code</p>
+            </div>
+            <div class="team-member">
+                <div class="avatar">AM</div>
+                <h4>Arya Mazumdar</h4>
+                <p class="role">Faculty Mentor</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer>
+    <p>&copy; 2026 DSC 180B Capstone &middot; UC San Diego</p>
+    <p style="margin-top: 6px;">
+        <a href="https://github.com/Lbangayan/DSC180B-Website">GitHub</a> &middot;
+        <a href="DSC_Capstone_Q2_Project_Report.pdf">Report</a> &middot;
+        <a href="poster_dsc180.pdf">Poster</a>
+    </p>
+</footer>
+
 </body>
 </html>
